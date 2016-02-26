@@ -1,0 +1,53 @@
+group 'com.globant.trainning'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'java'
+apply plugin: 'application'
+apply plugin: "jacoco"
+
+mainClassName = 'hello.HelloWorld'
+
+sourceCompatibility = 1.5
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+
+    testCompile "org.mockito:mockito-core:1.+"
+}
+
+repositories { jcenter() }
+
+test {
+    testLogging {
+        events "passed", "skipped", "failed", "standardOut", "standardError"
+    }
+    jacoco{
+        includes = ['hello/**']
+        excludes = ['test/**']
+        append = false
+    }
+
+    afterTest {
+        print "hello world"
+        jacocoTestReport.execute()
+    }
+}
+
+
+jacocoTestReport {
+    dependsOn test
+    description = "Generate Jacoco coverage reports after running tests."
+    reports {
+        xml.enabled true
+        html.enabled true
+    }
+    classDirectories = fileTree(dir: 'build/classes/main', include: 'hello/**')
+    sourceDirectories = fileTree(dir: 'scr/main/java', include: 'hello/**')
+}
+
+
+
